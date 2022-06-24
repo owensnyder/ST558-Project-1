@@ -195,7 +195,7 @@ NOTE: It is important to recogtnize the major market differences between the tra
 
 First, I will extract the necessary data i am going to work with via my created functions from above.
 
-## Extract SPY Data
+## Extract S&P 500 Data (SPY)
 
 ```{r}
 ## use the getAgg function to pull S&P 500 data 
@@ -218,6 +218,22 @@ SPY <- data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is
 #data.spy.spy <- data.spy %>% as_tibble() %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
 
 #plot(data.spy.spy$LogRet)
+```
+
+## Extract Vanguard 500 Index Fund (VOO)
+
+```{r}
+data.voo <- getAgg("VOO", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = FALSE, sort = 'asc', limit = 5000)
+## Now i am renaming column names 
+colnames(data.voo) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
+                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
+
+data.voo
+
+## create a new variable for Log Returns 
+VOO <- data.voo %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
+       mutate(Symbol = "VOO")
+
 ```
 
 ## Extract Crypto Data
