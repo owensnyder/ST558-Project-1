@@ -167,7 +167,7 @@ getEXCH <- function(asset_class,locale){
   output <- fromJSON(readLines(link,warn = FALSE))
 }
 ## hmmm....
-get.all <- getEXCH(asset_class = "crypto", locale = "us")
+get.all <- getEXCH(asset_class = "stocks", locale = "us")
 
 
 ```
@@ -176,7 +176,7 @@ Last function...
 # Function to....
 ```{r}
 ##hmmm...
-## i dont think i need another...
+## i dont think i need another...wait yeah i do 
 ```
 
 
@@ -206,8 +206,18 @@ colnames(data.spy) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPri
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
 data.spy
 
-plot(data.spy$Close)
+##plot(data.spy$Close)
 
+## create a new variable for Log Returns 
+data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
+SPY <- data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
+       mutate(Symbol = 'SPY')
+
+## NotE: set na = 0 because there are no returns on the first day/observation
+
+#data.spy.spy <- data.spy %>% as_tibble() %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
+
+#plot(data.spy.spy$LogRet)
 ```
 
 ## Extract Crypto Data
@@ -229,3 +239,15 @@ data.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "202
 plot(data.eth$c)
 ```
 
+
+
+
+## Numerical Summaries 
+
+I first want to display some simple summary statistics for the stocks and the cryptocurrecnies.
+
+```{r}
+## Summary for SPY data 
+SPY %>% summarise(meanVol = mean(Volume), meanOpen = mean(Open), meanClose = mean(Close))
+
+```
