@@ -1,0 +1,231 @@
+---
+title: "ST558 Project1"
+author: "Owen Snyder"
+date: '2022-06-16'
+output: 
+  html_document:
+    toc: true
+---
+
+Create render function
+```{r eval=FALSE}
+library(rmarkdown)
+render(
+ output_format = "github_document",
+  output_dir = "_posts",
+  output_options = list(
+  html_preview = FALSE
+)
+)
+ 
+
+ output_format = "github_document"
+  output_dir = "_posts"
+  output_options = list(
+  html_preview = FALSE
+  )
+```
+
+
+
+# Necessary Packages
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(httr)
+library(jsonlite)
+
+```
+
+dont need?, i.e. dont need to include, echo = F
+```{r}
+fin.data <- GET("https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2020-06-01/2020-06-17?apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+
+str(fin.data, max.level = 1)
+
+parsed <- fromJSON(rawToChar(fin.data$content))
+str(parsed, max.level = 1)
+```
+
+
+```{r}
+rawToChar(fin.data$content)
+fromJSON(readLines("https://api.polygon.io/v1/open-close/AAPL/2020-10-14?adjusted=true&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe"))
+```
+
+# Function for Daily Open/Close for Stocks
+Create function to grab Daily Open/Close for stocks
+```{r}
+getDailyOC <- function(stocksTicker,date,adjusted){
+  adj <- ifelse(adjusted, "true", "false")
+  link <- paste0("https://api.polygon.io/v1/open-close/",stocksTicker,"/",date,"?adjusted=",adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  
+  fromJSON(readLines(link,warn = FALSE))
+ 
+}
+## test
+getDailyOC(stocksTicker = "SPY", date = "2021-10-12", adjusted = TRUE)
+
+```
+
+grab Crypto data (open/close)
+# Function for Daily Open/Close for Crypto
+```{r}
+## use this function if you want to know the open/close prices for a given crypto currecy on a singular day.
+## NOTE: do this for all^
+
+getCryptoOC <- function(symbol, to, date, adjusted,...){
+  adj <- ifelse(adjusted, "true", "false")
+  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  
+  fromJSON(readLines(link,warn = FALSE))
+}
+
+getCryptoOC(symbol = "ETH", to = "USD", date = "2021-10-12", adjusted = TRUE)
+```
+
+
+grab Aggregate (stocks)
+# Function for Aggregates(Bars) Stock Data
+```{r}
+
+getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort="desc",limit=5000){
+  
+  adj <- ifelse(adjusted, "true", "false")
+  multiplier <- as.integer(multiplier)
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter",                                                   "year"))
+  sort <- match.arg(sort, choices = c("asc", "desc"))
+  limit <- as.integer(limit)
+  if (limit > 50000)
+    stop("limit must be less than 50000")
+  if(limit < 1)
+    stop("limit must be gt or eq 1")
+  
+    
+  link <-  paste0("https://api.polygon.io/v2/aggs/ticker/",stocksTicker,"/range/",multiplier,"/"
+                  ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort=",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  
+  output <- fromJSON(readLines(link,warn = FALSE))
+  
+  return(output$results)
+  
+  ## this is only printing out the tibble of data you request
+}
+
+#get.appl <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = TRUE, sort = 'desc', limit = 6000)
+
+
+## Now i am renaming column names 
+colnames(get.appl) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
+                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
+
+get.appl
+```
+
+
+# Function for Aggregates(Bars) Crypto Data
+```{r}
+## note: the pre-inputted arguments are for common defualts. they can be changed per
+## the users request
+getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
+                       sort="desc", limit=5000){
+  
+  adj <- ifelse(adjusted, "true", "false")
+  multiplier <- as.integer(multiplier)
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter",                                                   "year"))
+  sort <- match.arg(sort, choices = c("asc", "desc"))
+  limit <- as.integer(limit)
+  if (limit > 50000)
+    stop("limit must be less than 50000")
+  if(limit < 1)
+    stop("limit must be gt or eq 1")
+  
+  link <- paste0("https://api.polygon.io/v2/aggs/ticker/",cryptoTicker,"/range/",multiplier,"/",timespan,"/",from,"/",to,"?adjusted=",adj,"&sort",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  
+  output <- fromJSON(readLines(link,warn = FALSE))
+  return(output$results)
+  
+}
+## grab Ethereum
+get.eth <- getAgg("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",adjusted = TRUE, sort = 'desc', limit = 5000)
+## change col names
+get.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",adjusted = TRUE, sort = 'desc', limit = 5000)
+
+```
+
+
+function to see all types of asset based on location (US or global)
+# Function to find all Exchanges  the API carries
+```{r}
+getEXCH <- function(asset_class,locale){
+  
+  asset_class <- match.arg(asset_class, choices = c("stocks","options","crypto","fx"))
+  locale <- match.arg(locale, choices = c("us","global"))
+  
+  link <- paste0("https://api.polygon.io/v3/reference/exchanges?asset_class=",asset_class,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  
+  output <- fromJSON(readLines(link,warn = FALSE))
+}
+## hmmm....
+get.all <- getEXCH(asset_class = "crypto", locale = "us")
+
+
+```
+
+Last function...
+# Function to....
+```{r}
+##hmmm...
+## i dont think i need another...
+```
+
+
+LETS COMPARE CRYTO AND STOCK PRICES FOR A GIVEN TIME PERIOD
+
+“Bars” refer to a data representation that contains the most basic information about price movements of a financial asset.
+
+NEW VARIABLE SHOULD BE  RETURNS and LOG RETURNS
+
+# Exploratory Data Analysis
+Modeling stock and crypto performance can be a challenging task as there are many different measures we can assess. You may want to analyze one stock or a portfolio of stocks. and You may want to look at how risky these positions are.  
+
+In this EDA, I will pull data from the S&P 500 and different cryptocurrencies such as Bitcoin, Etherieum and Solana to see how they perform against my chosen date window. I want to analyze if there is any similarity between stock market trends and crypto trends 
+
+NOTE: It is important to recogtnize the major market differences between the tradional stock market and crypto currencies. Crypto is a 24/7 market
+
+First, I will extract the necessary data i am going to work with via my created functions from above.
+
+## Extract SPY Data
+
+```{r}
+## use the getAgg function to pull S&P 500 data 
+
+data.spy <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = FALSE, sort = 'asc', limit = 5000)
+## Now i am renaming column names 
+colnames(data.spy) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
+                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
+data.spy
+
+plot(data.spy$Close)
+
+```
+
+## Extract Crypto Data
+
+```{r}
+## use the getAggCryp function to pull Bitcoin Data
+
+data.btc <- getAggCryp("X:BTCUSD", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",                           adjusted = FALSE, sort = 'asc', limit = 5000)
+## Now change column names again
+colnames(data.btc) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
+                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
+data.btc
+
+plot(data.btc$Close)
+
+## can graph num transactions vs close price
+
+data.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",                           adjusted = FALSE, sort = 'asc', limit = 5000)
+plot(data.eth$c)
+```
+
