@@ -55,7 +55,9 @@ rawToChar(fin.data$content)
 fromJSON(readLines("https://api.polygon.io/v1/open-close/AAPL/2020-10-14?adjusted=true&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe"))
 ```
 
-# Function for Daily Open/Close for Stocks
+# Functions to Query Data
+
+## Function for Daily Open/Close for Stocks
 
 ```{r}
 ## This function will take in values of the ticker of a given stock, the date (day) you want to 
@@ -63,7 +65,8 @@ fromJSON(readLines("https://api.polygon.io/v1/open-close/AAPL/2020-10-14?adjuste
 
 getDailyOC <- function(stocksTicker,date,adjusted){
   adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
-  link <- paste0("https://api.polygon.io/v1/open-close/",stocksTicker,"/",date,"?adjusted=",adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  link <- paste0("https://api.polygon.io/v1/open-close/",stocksTicker,"/",date,"?adjusted=",adj,
+                 "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   fromJSON(readLines(link,warn = FALSE))
  ## here we are converting a JSON object into a usable R object and suppressing warnings
@@ -74,7 +77,7 @@ getDailyOC <- function(stocksTicker,date,adjusted){
 ```
 
 
-# Function for Daily Open/Close for Crypto
+## Function for Daily Open/Close for Crypto
 
 ```{r}
 ## This function will take in values for the symbol of a given cryptocurrency, the currency you want 
@@ -83,7 +86,8 @@ getDailyOC <- function(stocksTicker,date,adjusted){
 
 getCryptoOC <- function(symbol, to, date, adjusted,...){
   adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
-  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,"&apiK                    ey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,
+                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   fromJSON(readLines(link,warn = FALSE))
   ## here we are converting a JSON object into a usable R object and suppressing warnings
@@ -94,7 +98,7 @@ getCryptoOC <- function(symbol, to, date, adjusted,...){
 ```
 
 
-# Function for Aggregates(Bars) Stock Data
+## Function for Aggregates(Bars) Stock Data
 ```{r}
 ## this function will take in a stocks ticker, multiplier, time span, date range values (from and to),
 ## adjusted splits, a sort option, and a limit value
@@ -116,7 +120,8 @@ getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort=
   ## set limit conditions and stop the function if they fail
     
   link <-  paste0("https://api.polygon.io/v2/aggs/ticker/",stocksTicker,"/range/",multiplier,"/"
-                  ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort=",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFF                   Bgq7bUJp8TA7Yi7uDLMIe")
+                  ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort=",sort,"&limit=",limit,
+                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
   ## here we are converting a JSON object into a usable R object and suppressing warnings
@@ -132,7 +137,7 @@ getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort=
 ```
 
 
-# Function for Aggregates(Bars) Crypto Data
+## Function for Aggregates(Bars) Crypto Data
 
 ```{r}
 ## this function will take in a crypto ticker, a multiplier value, a time span, date ranges (from and to)
@@ -154,7 +159,8 @@ getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
   
   
   link <- paste0("https://api.polygon.io/v2/aggs/ticker/",cryptoTicker,"/range/",multiplier,"/"
-                 ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBg                  q7bUJp8TA7Yi7uDLMIe")
+                 ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort",sort,"&limit=",limit,
+                 "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
   return(output$results) ## return only the results 
@@ -166,7 +172,7 @@ getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
 ```
 
 
-# Function to find all Exchanges the API carries
+## Function to find all Exchanges the API carries
 
 ```{r}
 ## this function will take in an asset class (options specified below) and a locale (location)
@@ -192,7 +198,7 @@ getEXCH <- function(asset_class,locale){
 ```
 
 
-# Function to find Grouped Daily(Bars) for All Stocks
+## Function to find Grouped Daily(Bars) for All Stocks
 
 ```{r}
 ## Get the daily open, high, low, and close (OHLC) for the entire stocks/equities markets
@@ -229,74 +235,44 @@ NOTE: It is important to recogtnize the major market differences between the tra
 
 First, I will extract the necessary data i am going to work with via my created functions from above.
 
-## Extract S&P 500 Data (SPY)
+## Extract S&P 500 (SPY) Data
 
-```{r}
+```{r cache=TRUE}
 ## use the getAgg function to pull S&P 500 data 
 
 data.spy <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",adjusted = FALSE, sort = 'asc', limit = 5000)
+
 ## Now i am renaming column names 
 colnames(data.spy) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
-data.spy
-
-##plot(data.spy$Close)
 
 ## create a new variable for Log Returns 
-data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
+#data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
 SPY <- data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
-       mutate(Symbol = 'SPY') %>% mutate(Date = range)
+       mutate(Symbol = 'SPY')# %>% mutate(Date = range)
+## Note: set na = 0 because there are no returns on the first day/observation
 
-## NotE: set na = 0 because there are no returns on the first day/observation
-
-#data.spy.spy <- data.spy %>% as_tibble() %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
-
-#plot(data.spy.spy$LogRet)
 ```
 
-## Extract Vanguard 500 Index Fund (VOO)
+## Extract Vanguard 500 Index Fund (VOO) Data
 
-```{r}
+```{r cache=TRUE}
 data.voo <- getAgg("VOO", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",adjusted = FALSE, sort = 'asc', limit = 5000)
+
 ## Now i am renaming column names 
 colnames(data.voo) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
-
-data.voo
 
 ## create a new variable for Log Returns 
 VOO <- data.voo %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
        mutate(Symbol = "VOO")
 
-#VOO %>% select(NumTransactions)
-#summary(VOO$NumTransactions)
-## maybe find which ones are fewer and most
-```
-
-## Extract REIT data
-
-```{r}
-## Camden Property Trust
-data.cpt <- getAgg("CPT", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",adjusted = FALSE, sort = 'asc', limit = 5000)
-## Now i am renaming column names 
-colnames(data.cpt) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
-                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
-data.cpt
-
-## add everything else with mutate 
-```
-
-
-
-Combine stock data
-```{r}
-all.stocks <- bind_rows(SPY,VOO)
-length(SPY)
 
 ```
+
 
 Date formatting 
-```{r}
+```{r eval=FALSE, echo=FALSE}
 start.date <- ymd("2021-06-15")
 end.date <- ymd("2022-06-15")
 range <- seq(start.date, end.date,"days")
@@ -308,15 +284,20 @@ length(range[lubridate::wday(range) %in% 2:6])
 
 work.days <- !is.holiday(omg)
 
-final.stock.date <- omg[-c("2022-05-30")]
+#final.stock.date <- omg[-c("2022-05-30")] not working 
 
 ```
 
 
-## Extract Crypto Data
+## Extract Bitcoin (BTC) Data
 
-```{r}
+```{r cache=TRUE}
 ## use the getAggCryp function to pull Bitcoin Data
+
+start.date <- ymd("2021-06-15")
+end.date <- ymd("2022-06-15")
+range <- seq(start.date, end.date,"days")
+fin.quarters <- quarters(range)
 
 data.btc <- getAggCryp("X:BTCUSD", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",                           adjusted = FALSE, sort = 'asc', limit = 5000)
 ## Now change column names again
@@ -324,12 +305,13 @@ colnames(data.btc) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPri
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
 
 BTC <- data.btc %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
-       mutate(Symbol = "BTC") %>% mutate(Date = range, Quarters = fin.quarters)
+       mutate(Symbol = "BTC") %>% mutate(Date = range) %>% mutate(Quarters = fin.quarters)
 
 
-## can graph num transactions vs close price
+```
 
-
+## Extract Ethereum (ETH) Data
+```{r}
 data.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",                           adjusted = FALSE, sort = 'asc', limit = 5000)
 colnames(data.eth) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
@@ -342,7 +324,7 @@ ETH <- data.eth %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is
 ```
 
 Combine Crypto
-```{r}
+```{r echo=FALSE, eval=FALSE}
 all.crypto <- bind_rows(BTC,ETH)
 all.c <- merge(BTC,ETH, by = 'Date', all.x = TRUE)
 all.poo <- merge(BTC,ETH, by.x = 'Date', 'Quarter', by.y = 'Date', 'Quarter', all.x = FALSE, all.y = FALSE )
@@ -356,9 +338,9 @@ ETH %>% mutate(TransCategory = ifelse(NumTransactions %in% 750000:1852104, "Many
                                       ifelse(NumTransactions %in% 42510:450000, "Few", "NONE"))))
 ```
 
-contingency tables
+## Contingency Tables
 ```{r}
-hist(ETH$NumTransactions)
+#hist(ETH$NumTransactions)
 table(ETH$TransCategory, ETH$Quarters)
 ```
 
@@ -377,7 +359,7 @@ SPY %>% summarise(meanVol = mean(Volume), meanOpen = mean(Open), meanClose = mea
 
 Graphs:
 
-Histograms
+## Histograms: BTC, ETH, SPY, VOO
 ```{r}
 
 p <- ggplot(data = BTC, aes(x = BTC$LogRet))
@@ -394,7 +376,7 @@ p4+geom_histogram()
 ```
 
 
-Boxplots:
+## Boxplots: BTC, ETH
 ```{r}
 #bp1 <- ggplot(data = all.c, x= all.c$NumTransactions.y, y = all.c$Open.y )
 #bp1 + geom_boxplot()
@@ -410,8 +392,9 @@ bp2 + geom_boxplot()
 
 
 
-Time Series Graph for Bitcoin
+## Time Series Graph for BTC, ETH
 ```{r}
+## time series graph for BTC
 ggplot(data = BTC, aes(x=Date)) + 
   geom_line(aes(y=LogRet)) + 
   labs(title="Time Series Plot on Log Returns for Bitcoin", 
@@ -420,10 +403,7 @@ ggplot(data = BTC, aes(x=Date)) +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5),  # rotate x axis text
         panel.grid.minor = element_blank())  # turn off minor grid 
 
-```
-
-Time Series Graph for Ethereum
-```{r}
+## time series graph for ETH
 ggplot(data = ETH, aes(x=Date)) + 
   geom_line(aes(y=LogRet)) + 
   labs(title="Time Series Plot on Log Returns for Ethereum", 
@@ -436,15 +416,3 @@ ggplot(data = ETH, aes(x=Date)) +
 ```
 
 Here, we notice that ETH is much nosier than Bitcoin.
-
-
-
-
-```{r}
-
-plot(ETH$Open,ETH$NumTransactions)
-plot(ETH$NumTransactions, ETH$Open)
-plot(ETH$Volume, ETH$Open)
-
-
-```
