@@ -9,12 +9,12 @@ output:
 
 Create render function
 ```{r eval=FALSE}
-library(rmarkdown)
-render(
+
+rmarkdown::render('README.md',
  output_format = "github_document",
-  output_dir = "_posts",
+ #output_dir = "_posts",
   output_options = list(
-  html_preview = FALSE
+  html_preview = TRUE
 )
 )
  
@@ -29,12 +29,13 @@ render(
 
 
 # Necessary Packages
-```{r message =FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(httr)
 library(jsonlite)
 library(lubridate)
+library(bizdays)
 
 ```
 
@@ -49,135 +50,167 @@ str(parsed, max.level = 1)
 ```
 
 
-```{r}
+```{r warning=FALSE, echo=FALSE}
 rawToChar(fin.data$content)
 fromJSON(readLines("https://api.polygon.io/v1/open-close/AAPL/2020-10-14?adjusted=true&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe"))
 ```
 
 # Function for Daily Open/Close for Stocks
-Create function to grab Daily Open/Close for stocks
+
 ```{r}
+## This function will take in values of the ticker of a given stock, the date (day) you want to 
+## look at, and whether or not you want adjusted splits
+
 getDailyOC <- function(stocksTicker,date,adjusted){
-  adj <- ifelse(adjusted, "true", "false")
+  adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
   link <- paste0("https://api.polygon.io/v1/open-close/",stocksTicker,"/",date,"?adjusted=",adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
-  
+  ## the link to connect to the API endpoint
   fromJSON(readLines(link,warn = FALSE))
- 
+ ## here we are converting a JSON object into a usable R object and suppressing warnings
 }
-## test
-getDailyOC(stocksTicker = "SPY", date = "2021-10-12", adjusted = TRUE)
+## test the function with a ticker
+## getDailyOC(stocksTicker = "SPY", date = "2021-10-12", adjusted = TRUE)
 
 ```
 
-grab Crypto data (open/close)
+
 # Function for Daily Open/Close for Crypto
+
 ```{r}
-## use this function if you want to know the open/close prices for a given crypto currecy on a singular day.
-## NOTE: do this for all^
+## This function will take in values for the symbol of a given cryptocurrency, the currency you want 
+## the crypto to be converted into, the date (day) you want to look at, and  and whether or not you want 
+## adjusted splits
 
 getCryptoOC <- function(symbol, to, date, adjusted,...){
-  adj <- ifelse(adjusted, "true", "false")
-  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
-  
+  adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
+  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,"&apiK                    ey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  ## the link to connect to the API endpoint
   fromJSON(readLines(link,warn = FALSE))
+  ## here we are converting a JSON object into a usable R object and suppressing warnings
 }
 
-getCryptoOC(symbol = "ETH", to = "USD", date = "2021-10-12", adjusted = TRUE)
+## test the function with a crypto ticker
+##getCryptoOC(symbol = "ETH", to = "USD", date = "2021-10-12", adjusted = TRUE)
 ```
 
 
-grab Aggregate (stocks)
 # Function for Aggregates(Bars) Stock Data
 ```{r}
+## this function will take in a stocks ticker, multiplier, time span, date range values (from and to),
+## adjusted splits, a sort option, and a limit value
+## Note: the pre-inputted arguments are for common defaults. they can be changed per the users request
 
 getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort="desc",limit=5000){
   
-  adj <- ifelse(adjusted, "true", "false")
-  multiplier <- as.integer(multiplier)
-  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter",                                                   "year"))
+  adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
+  multiplier <- as.integer(multiplier) ## multiplier must be an integer 
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter", "year"))
+  ## provide a list of time span choices the URL and function will be able to include
   sort <- match.arg(sort, choices = c("asc", "desc"))
+  ## establish the sort of how you want data to be printed 
   limit <- as.integer(limit)
   if (limit > 50000)
     stop("limit must be less than 50000")
   if(limit < 1)
-    stop("limit must be gt or eq 1")
-  
+    stop("limit must be greater than or equal to 1")
+  ## set limit conditions and stop the function if they fail
     
   link <-  paste0("https://api.polygon.io/v2/aggs/ticker/",stocksTicker,"/range/",multiplier,"/"
-                  ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort=",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
-  
+                  ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort=",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFF                   Bgq7bUJp8TA7Yi7uDLMIe")
+  ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
+  ## here we are converting a JSON object into a usable R object and suppressing warnings
   
   return(output$results)
+  ## return only the results 
   
-  ## this is only printing out the tibble of data you request
 }
 
-#get.appl <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = TRUE, sort = 'desc', limit = 6000)
+## test the function
+## get.appl <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = TRUE, sort = 'desc', limit = 6000)
 
-
-## Now i am renaming column names 
-colnames(get.appl) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
-                        "LowestPrice", "UnixTimes(msec)", "NumTransactions")
-
-get.appl
 ```
 
 
 # Function for Aggregates(Bars) Crypto Data
+
 ```{r}
-## note: the pre-inputted arguments are for common defualts. they can be changed per
-## the users request
+## this function will take in a crypto ticker, a multiplier value, a time span, date ranges (from and to)
+## adjusted splits, a sort option, and limit value
 getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
                        sort="desc", limit=5000){
   
-  adj <- ifelse(adjusted, "true", "false")
-  multiplier <- as.integer(multiplier)
-  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter",                                                   "year"))
+  adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
+  multiplier <- as.integer(multiplier) ## multiplier must be an integer
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter", "year"))
+  ## provide a list of time span choices the URL and function will be able to include
   sort <- match.arg(sort, choices = c("asc", "desc"))
+  ## establish the sort of how you want data to be printed
   limit <- as.integer(limit)
   if (limit > 50000)
     stop("limit must be less than 50000")
   if(limit < 1)
-    stop("limit must be gt or eq 1")
+    stop("limit must be greater than or equal to 1")
   
-  link <- paste0("https://api.polygon.io/v2/aggs/ticker/",cryptoTicker,"/range/",multiplier,"/",timespan,"/",from,"/",to,"?adjusted=",adj,"&sort",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   
+  link <- paste0("https://api.polygon.io/v2/aggs/ticker/",cryptoTicker,"/range/",multiplier,"/"
+                 ,timespan,"/",from,"/",to,"?adjusted=",adj,"&sort",sort,"&limit=",limit,"&apiKey=O5bhHpJ7TFFBg                  q7bUJp8TA7Yi7uDLMIe")
+  ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
-  return(output$results)
-  
+  return(output$results) ## return only the results 
 }
-## grab Ethereum
-get.eth <- getAgg("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",adjusted = TRUE, sort = 'desc', limit = 5000)
-## change col names
-get.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",adjusted = TRUE, sort = 'desc', limit = 5000)
 
+## test function
+## get.eth <- getAgg("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",
+##                  adjusted = TRUE, sort = 'desc', limit = 5000)
 ```
 
 
-function to see all types of asset based on location (US or global)
-# Function to find all Exchanges  the API carries
+# Function to find all Exchanges the API carries
+
 ```{r}
+## this function will take in an asset class (options specified below) and a locale (location)
+
 getEXCH <- function(asset_class,locale){
   
   asset_class <- match.arg(asset_class, choices = c("stocks","options","crypto","fx"))
+  ## choices for asset_class must be these four
   locale <- match.arg(locale, choices = c("us","global"))
-  
-  link <- paste0("https://api.polygon.io/v3/reference/exchanges?asset_class=",asset_class,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
-  
+  ## locale must be US or global
+  link <- paste0("https://api.polygon.io/v3/reference/exchanges?asset_class=",asset_class,
+                 "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
+  return(output$results) ## return only the results section
+  
 }
-## hmmm....
-get.all <- getEXCH(asset_class = "stocks", locale = "us")
+
+## test the function
+## get.all <- getEXCH(asset_class = "stocks", locale = "us")
 
 
 ```
 
-Last function...
-# Function to....
+
+# Function to find Grouped Daily(Bars) for All Stocks
+
 ```{r}
-##hmmm...
-## i dont think i need another...wait yeah i do 
+## Get the daily open, high, low, and close (OHLC) for the entire stocks/equities markets
+
+getGroupBars <- function(date, adjusted, include_otc){
+  adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
+  otc <- ifelse(include_otc, "true", "false") ## setting include_otc to be only true or false
+  link <- paste0("https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/",date,"?adjusted=",adj,
+                 "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  ## the link to connect to the API endpoint
+  output <- fromJSON(readLines(link,warn = FALSE))
+  return(output$results) 
+  ## return only the results
+}
+
+## test function
+## getGroupBars(date = "2021-10-12", adjusted = TRUE, include_otc = TRUE)
+
 ```
 
 
@@ -212,7 +245,7 @@ data.spy
 ## create a new variable for Log Returns 
 data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0)
 SPY <- data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
-       mutate(Symbol = 'SPY')
+       mutate(Symbol = 'SPY') %>% mutate(Date = range)
 
 ## NotE: set na = 0 because there are no returns on the first day/observation
 
@@ -258,7 +291,7 @@ data.cpt
 Combine stock data
 ```{r}
 all.stocks <- bind_rows(SPY,VOO)
-
+length(SPY)
 
 ```
 
@@ -269,6 +302,13 @@ end.date <- ymd("2022-06-15")
 range <- seq(start.date, end.date,"days")
 head(range, 40)
 fin.quarters <- quarters(range)
+
+omg <- range[lubridate::wday(range) %in% 2:6] # remove weekdays 
+length(range[lubridate::wday(range) %in% 2:6])
+
+work.days <- !is.holiday(omg)
+
+final.stock.date <- omg[-c("2022-05-30")]
 
 ```
 
@@ -295,15 +335,31 @@ colnames(data.eth) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPri
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
 
 ETH <- data.eth %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is.na(.), 0) %>% 
-       mutate(Symbol = "ETH") %>% mutate(Date = range, Quarters = fin.quarters) 
+       mutate(Symbol = "ETH") %>% mutate(Date = range, Quarters = fin.quarters) %>% 
+       mutate(TransCategory = ifelse(NumTransactions %in% 800000:1852104, "Many",
+                              ifelse(NumTransactions %in% 500000:800000, "Average",
+                              ifelse(NumTransactions %in% 42510:500000, "Few", "NONE"))))
 ```
 
 Combine Crypto
 ```{r}
 all.crypto <- bind_rows(BTC,ETH)
-all.c <- merge(BTC,ETH, by = 'Date')
-
+all.c <- merge(BTC,ETH, by = 'Date', all.x = TRUE)
+all.poo <- merge(BTC,ETH, by.x = 'Date', 'Quarter', by.y = 'Date', 'Quarter', all.x = FALSE, all.y = FALSE )
 ## table but need counts 
+
+#left_join(BTC,ETH, by = "Date","Quarters")
+summary(ETH$NumTransactions)
+
+ETH %>% mutate(TransCategory = ifelse(NumTransactions %in% 750000:1852104, "Many",
+                                      ifelse(NumTransactions %in% 450000:750000, "Average",
+                                      ifelse(NumTransactions %in% 42510:450000, "Few", "NONE"))))
+```
+
+contingency tables
+```{r}
+hist(ETH$NumTransactions)
+table(ETH$TransCategory, ETH$Quarters)
 ```
 
 
@@ -372,11 +428,23 @@ ggplot(data = ETH, aes(x=Date)) +
   geom_line(aes(y=LogRet)) + 
   labs(title="Time Series Plot on Log Returns for Ethereum", 
        subtitle="Returns Based on Close Price", 
-       y="Log Returns") +  # title and caption
-  theme(axis.text.x = element_text(angle = 90, vjust=0.5),  # rotate x axis text
-        panel.grid.minor = element_blank())  # turn off minor grid 
+       y="Log Returns") +  
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5))  
+        #panel.grid.minor = element_blank())  # turn off minor grid 
+
+## CHECK GRIDS
+```
+
+Here, we notice that ETH is much nosier than Bitcoin.
+
+
+
+
+```{r}
+
+plot(ETH$Open,ETH$NumTransactions)
+plot(ETH$NumTransactions, ETH$Open)
+plot(ETH$Volume, ETH$Open)
 
 
 ```
-
-Here, we notiuce that ETH is much nosier than Bitcoin.
