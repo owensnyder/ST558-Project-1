@@ -50,9 +50,23 @@ After I have built the necessary functions, I will use some of them to
 pull data to conduct an Exploratory Data Analysis on the stock and
 crypto currency markets.
 
+You can find the [Polygon.io](https://polygon.io/docs/getting-started)
+API by clicking the link!
+
 # Necessary Packages
 
-These are all of the packages I used to complete this project.
+These are all of the packages I used to complete this project:
+
+-   `tidyverse` is a collection of useful packages designed for data
+    science.  
+-   `ggplot2` is an amazing way to create visually pleasing and
+    informative graphics.
+-   `httr` is a collection of useful functions for using APIs.
+-   `jsonlite` is useful package for working with JSON objects in R.
+-   `lubridate` is useful package for dealing with dates and times in R.
+-   `rmarkdown` is a useful package for creating R Markdown documents in
+    a variety of formats.
+-   `knitr` is a useful package to integrate computing and reporting.
 
 ``` r
 library(tidyverse)
@@ -60,6 +74,8 @@ library(ggplot2)
 library(httr)
 library(jsonlite)
 library(lubridate)
+library(rmarkdown)
+library(knitr)
 ```
 
 # Functions to Query Data
@@ -69,13 +85,12 @@ from the Polygon.io API.
 
 ## Function for Daily Open/Close for Stocks
 
-This function will take in values of the ticker of a given stock, the
-date (day) you want to look at, and whether or not you want adjusted
-splits
+This function will take in values of a ticker of a given stock, the date
+(day) you want to look at, and whether or not you want adjusted splits.
 
 ``` r
 getDailyOC <- function(stocksTicker,date,adjusted){
-  adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
+  adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
   link <- paste0("https://api.polygon.io/v1/open-close/",stocksTicker,"/",date,"?adjusted=",adj,
                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
@@ -91,20 +106,20 @@ getDailyOC <- function(stocksTicker,date,adjusted){
 This function will take in values for the symbol of a given
 cryptocurrency, the currency you want the crypto to be converted into,
 the date (day) you want to look at, and and whether or not you want
-adjusted splits
+adjusted splits.
 
 ``` r
 getCryptoOC <- function(symbol, to, date, adjusted,...){
-  adj <- ifelse(adjusted, "true", "false") ##setting adjusted to be only true or false
-  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted=",adj,
-                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
+  link <-  paste0("https://api.polygon.io/v1/open-close/crypto/",symbol,"/",to,"/",date,"?adjusted="
+                  ,adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   fromJSON(readLines(link,warn = FALSE))
   ## here we are converting a JSON object into a usable R object and suppressing warnings
 }
 
 ## test the function with a crypto ticker
-##getCryptoOC(symbol = "ETH", to = "USD", date = "2021-10-12", adjusted = TRUE)
+## getCryptoOC(symbol = "ETH", to = "USD", date = "2021-10-12", adjusted = TRUE)
 ```
 
 ## Function for Aggregates(Bars) Stock Data
@@ -113,14 +128,15 @@ This function will take in a stocks ticker, multiplier, time span, date
 range values (from and to),adjusted splits, a sort option, and a limit
 value.  
 Note: the pre-inputted arguments are for common defaults. they can be
-changed per the users request
+changed per the users request.
 
 ``` r
 getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort="desc",limit=5000){
   
   adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
   multiplier <- as.integer(multiplier) ## multiplier must be an integer 
-  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter", "year"))
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month",
+                                             "quarter", "year"))
   ## provide a list of time span choices the URL and function will be able to include
   sort <- match.arg(sort, choices = c("asc", "desc"))
   ## establish the sort of how you want data to be printed 
@@ -144,13 +160,14 @@ getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort=
 }
 
 ## test the function
-## get.appl <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2020-10-01", to= "2022-06-15",adjusted = TRUE, sort = 'desc', limit = 6000)
+## get.appl <- getAgg("AAPL", multiplier = 1, timespan = "day", from = "2020-10-01", 
+## to= "2022-06-15",adjusted = TRUE, sort = 'desc', limit = 6000)
 ```
 
 ## Function for Aggregates(Bars) Crypto Data
 
 This function will take in a crypto ticker, a multiplier value, a time
-span, date ranges (from and to) adjusted splits, a sort option, and
+span, date ranges (from and to), adjusted splits, a sort option, and
 limit value.
 
 ``` r
@@ -159,7 +176,8 @@ getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
   
   adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
   multiplier <- as.integer(multiplier) ## multiplier must be an integer
-  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", "quarter", "year"))
+  timespan <- match.arg(timespan,choices = c("minute", "hour", "day", "week", "month", 
+                                             "quarter", "year"))
   ## provide a list of time span choices the URL and function will be able to include
   sort <- match.arg(sort, choices = c("asc", "desc"))
   ## establish the sort of how you want data to be printed
@@ -179,8 +197,8 @@ getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
 }
 
 ## test function
-## get.eth <- getAgg("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", to= "2022-12-31",
-##                  adjusted = TRUE, sort = 'desc', limit = 5000)
+## get.eth <- getAgg("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-10-01", 
+## to = "2022-12-31", adjusted = TRUE, sort = 'desc', limit = 5000)
 ```
 
 ## Function for All Exchanges the API carries
@@ -218,8 +236,8 @@ entire stocks/equities markets.
 getGroupBars <- function(date, adjusted, include_otc){
   adj <- ifelse(adjusted, "true", "false") ## setting adjusted to be only true or false
   otc <- ifelse(include_otc, "true", "false") ## setting include_otc to be only true or false
-  link <- paste0("https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/",date,"?adjusted=",adj,
-                 "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
+  link <- paste0("https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/",date,"?adjusted="
+                 ,adj,"&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
   return(output$results) 
@@ -232,50 +250,50 @@ getGroupBars <- function(date, adjusted, include_otc){
 
 # Exploratory Data Analysis
 
-Modeling stock and crypto currency performance can be a challenging task
+Modeling stock and cryptocurrency performance can be a challenging task
 as there are many different measures we can assess. You may want to
-analyze one stock or a portfolio of stocks and you may want to look at
+analyze one stock or a portfolio of stocks, and you may want to look at
 how risky these positions are.
 
-In this Exploratory Data Analysis, I will pull data from the S&P 500,
+In this Exploratory Data Analysis, I will pull data from the S&P 500 and
 the Vanguard 500 Index Fund as my two traditional stock market
 exchange-traded funds. I will also pull data from Bitcoin and Ethereum
 from the same date window as my traditional stocks. **The range of data
 that I will be analyzing is June 15, 2021 to June 15, 2022.**
 
-The big question will be: How do these stocks and crypto currencies
+The big question will be: How do these stocks and cryptocurrencies
 compare against each other? In the past year, the stock market has been
-extremely volatile and the talk and usage of crypto currencies has
-skyrocketed. I will be analyzing the S&P 500 against the Vanguard 500
-based on different market variables. I well then do the same analysis on
-Bitcoin and Ethereum to see how well they perform against each other. I
-will be looking at variables such as the “Number of Transactions” in a
-given day for a specific position and the Open and Close Price on a
-given day in my time window.
+extremely volatile and the conversation and usage of cryptocurrencies
+has skyrocketed. I will be analyzing the S&P 500 against the Vanguard
+500 based on different market variables. I well then do the same
+analysis on Bitcoin and Ethereum to see how well they perform against
+each other. I will be looking at variables such as the Number of
+Transactions in a given day for a specific position and the Open and
+Close Price on a given day in my time window.
 
 I will also be creating a very important new variable that is used
-throughout finance, that being “Log Returns”. Log returns are extremely
+throughout finance, that being Log Returns. Log returns are extremely
 important in financial analysis because it gives us the ability to
 assume a Normal distribution. This assumption becomes extremely powerful
 when risk analytics are performed (Value at Risk, Expected Shortfall).
 However, in the scope of this project, Log Returns will still be useful
-as it will give use the opportunity to visualize and quantify returns in
+as it will give us the opportunity to visualize and quantify returns in
 a more consistent manner.
 
-Another important variable I will be creating is that of a “Quarters”
+Another important variable I will be creating is that of a Quarters
 variable. Quarterly performances in finance are referenced often
 throughout a fiscal year and they will give us a better understanding on
-which quarters have been performing best or worse. By doing this, we
+which quarters have been performing better or worse. By doing this, we
 will be able to know what was the best time to have invested into a
-stock or crypto based on quarterly Close Prices. Along with the
-“Quarters” variable, another variable will be created to achieve a more
+stock or crypto based on quarterly Close Prices. Along with the Quarters
+variable, another variable will be created to achieve a more
 categorically pleasing way to look at quarter performance. I will be
 creating a variable, “TransCategory” to categorize how many transactions
-were made throughot the given time period.
+were made throughout the given time period.
 
 NOTE: It is important to recognize the major market differences between
-the traditional stock market and crypto currencies. Crypto currency is a
-24/7 market whereas the stock market excludes weekends and holidays.
+the traditional stock market and cryptocurrencies. Crypto is a 24/7
+market whereas the stock market excludes weekends and holidays.
 
 NOTE: Other variables will be created below but will not be analyzed
 directly. Specifically, they will be part of the data wrangling process
@@ -285,7 +303,6 @@ and will be explained as they arise.
 
 ``` r
 ## use the getAgg function to pull S&P 500 data 
-
 data.spy <- getAgg("SPY", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",
                    adjusted = FALSE, sort = 'asc', limit = 5000)
 
@@ -316,7 +333,7 @@ SPY <- data.spy %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is
 data.voo <- getAgg("VOO", multiplier = 1, timespan = "day", from = "2021-06-15", to= "2022-06-15",
                    adjusted = FALSE, sort = 'asc', limit = 5000)
 
-## Now i am renaming column names 
+## Now I am renaming column names 
 colnames(data.voo) <- c('Volume', 'WeightedVolume', "Open", "Close", "HighestPrice",
                         "LowestPrice", "UnixTimes(msec)", "NumTransactions")
 
@@ -358,6 +375,7 @@ BTC <- data.btc %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is
 ## Extract Ethereum (ETH) Data
 
 ``` r
+## use the getAggCryp function to pull Ethereum Data
 data.eth <- getAggCryp("X:ETHUSD", multiplier = 1, timespan = "day", from = "2021-06-15", 
                        to = "2022-06-15", adjusted = FALSE, sort = 'asc', limit = 5000)
 ## now change column names
@@ -376,13 +394,13 @@ ETH <- data.eth %>% mutate(LogRet = log(Close) - log(lag(Close))) %>% replace(is
 
 ## Contingency Tables
 
-I will no create contingency tables for the Number of Transactions based
-on Quarters. I have grouped the Number of Transactions into three main
-categories: Average, Few, or Many. This way, we will be able to identify
-which quarters seemed to have the what category of transaction. For
-example, A quarter with a high count of “Many” transactions may indicate
-a surging market. This could be an indication of a good time to buy or
-sell your given position. Below, I will summarize my findings:
+I will now create contingency tables for the Number of Transactions
+based on Quarters. I have grouped the Number of Transactions into three
+main categories: Average, Few, or Many. This way, we will be able to
+identify which quarters seemed to have which category of transaction.
+For example, A quarter with a high count of “Many” transactions may
+indicate a surging market. This could be an indication of a good time to
+buy or sell your given position. Below, I will summarize my findings:
 
 For the S&P 500 data, there is a high count of “Few” transactions in Q3,
 this may be an indication of a slow market period for Q3 and in turn,
@@ -395,15 +413,15 @@ transactions in Q3. This is similar to the S&P data and this gives us a
 better idea of the stock market conditions in Q3.
 
 For the Ethereum data, the trend is surprisingly the same. Q3 has the
-highest count fo “Few” transactions. This is important to note that the
+highest count of “Few” transactions. This is important to note that the
 quarterly transaction performance may be similar between the traditional
 stock market and the crypto market.
 
-Finally, for the Bitcoin data also follows the same trend. Q3 has the
-highest count fo “Few” transactions.
+Finally, the Bitcoin data also follows the same trend. Q3 has the
+highest count of “Few” transactions.
 
 Between the four contingency tables, I believe that it is safe to
-conclude that an investor was best to hold their shares if the had any,
+conclude that an investor was best to hold their shares if they had any,
 or not buy into the market during a slow Quarter 3 across the board of
 the stock market and the crypto market.
 
@@ -481,8 +499,8 @@ the S&P 500. On the other hand, Q4 produced the highest average Log
 Returns.
 
 As expected, the Vanguard 500 stock also had the worst performance of
-average Log Returns and average Close Price. Again, Q4 produced the
-highest average Log Returns.
+average Log Returns and average Close Price for Q2. Again, Q4 produced
+the highest average Log Returns.
 
 Switching into the crypto-realm, Bitcoin produced poor average Log
 Returns for both Q1 and Q2. Conversely, Q3 had the highest average Log
@@ -492,9 +510,15 @@ For Ethereum, we see a similar trend in that Q1 and Q2 produced the
 worst average Log Returns. Again, Q3 produced the best average Log
 Returns.
 
+These numerical summaries provide key insight in that the positions in
+the traditional stock market followed the same trends. Also, the
+cryptocurrecies tended to follow the same trends as well. Most
+importantly, it is apparent that the two different markets experienced
+different quarters of growth and returns.
+
 ``` r
-## Simple quantitative summaries for each position data 
-## I am using the mean of Open,Close,LogRet, NumTransactions, and standard deviation of LogRet
+## quantitative summaries for each position data 
+## I am using the mean of Open, Close, LogRet, NumTransactions, and standard deviation of LogRet
 
 ## SPY data
 SPY %>% group_by(Quarters) %>% summarise(avgOpen = mean(Open), avgClose = mean(Close), 
@@ -615,19 +639,21 @@ terms of the Close Price.
 First, the boxplot for the S&P 500 shows how volatile Q2 was for the
 Close Price which can be related to how poor the average Log Returns
 were for that quarter. That plot shows a very large spread compared to
-the others. Conversely, the boxplot for Q3 has a tight amount of spread,
+the others. Conversely, the boxplot for Q3 has a tight spread,
 indicating that this quarter’s Close Price did not vary much.
 
 Second, the boxplot for the Vanguard 500 shows the volatility in Close
 Price for Q2 and Q3 where the plots depict large amounts of spread.
-Also, we see that Q4 shows the highest Close Prices like we analyzed
-above.
+Also, we see that Q4 shows the highest Close Prices.
 
-For Bitcoin, Q3 and Q4 shows large amounts of sprad and skew in terms of
-Close Price. Whereas Q1 has a very tight plot with little spread.
+For Bitcoin, Q3 and Q4 shows large amounts of spread and skew in terms
+of Close Price. Whereas Q1 has a very tight plot with little spread.
 
 For Ethereum, Q2 and Q3 show large amounts of spread and some skew.
 Whereas Q1 and Q4 are quite similar and more consistent.
+
+Because investing can be extremely unpredictable, we notice many
+outliers throughout all four positions.
 
 ``` r
 ## boxplot for SPY
@@ -669,8 +695,8 @@ bp.eth + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Ethereum") +
 
 Time series graphs are a great way to see how data changes as time
 changes. Below are four time series graphs based on time and Log
-Returns. We will be looking for contant trends and should take note of
-extreme shfits.
+Returns. We will be looking for constant trends and should take note of
+extreme shifts.
 
 First, for S&P 500, as time starts in June 2021 and ends in June 2022,
 the graphs becomes much nosier and less constant. We can see that Log
@@ -741,51 +767,61 @@ Finally, I want to investigate if there is a relationship between the
 Close Price and the Number of Transactions.
 
 Unfortunately, there is not a strong correlation between the Close Price
-and the Number of Transactions. The plots for S&P 500 and Vanguard 500
-appear to show a more negative correlation compared to both of the
-Bitcoin and Ethereum plots. Also to note, there are many cases of
-outliers present in each of the graphs. And the points in each
-scatterplot tend to cluster around the average value of the close price.
+and the Number of Transactions. Each position exhibits a negative
+correlation in which that number is very low, indicating weak
+correlation. Although each correlation is negative, the S&P 500 has the
+largest correlation coefficent although it is negative. Also to note,
+there are many cases of outliers present in each of the graphs. And the
+points in each scatter plot tend to cluster around the average value of
+the Close Price.
 
 ``` r
 ## Create scatterplots with a fitted regression line
 ## NOTE: i am keeping the SE argument true for all
 
 ## plot for SPY
+cor.spy <- cor(SPY$Close,SPY$NumTransactions) ## find correlation to be able to plot on graph
 sp.spy <- ggplot(data = SPY, aes(x = Close, y = NumTransactions))
 sp.spy + geom_point() + geom_smooth(method = lm, col = "red") +
          ggtitle("Scatterplot for S&P 500") +
-         labs(x = "Close Price ($)")
+         labs(x = "Close Price ($)") +
+         geom_text(x = 460, y = 3e+06, size = 5, label = paste0("Corr = ", round(cor.spy,2)))
 ```
 
 ![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 ## plot for VOO
+cor.voo <- cor(VOO$Close,VOO$NumTransactions) ## find correlation to be able to plot on graph
 sp.voo <- ggplot(data = VOO, aes(x = Close, y = NumTransactions))
 sp.voo + geom_point() + geom_smooth(method = lm, col = "red") +
          ggtitle("Scatterplot for Vanguard 500") +
-         labs(x = "Close Price ($)")
+         labs(x = "Close Price ($)") +
+         geom_text(x = 430, y = 4e+05, size = 5, label = paste0("Corr = ", round(cor.voo,2)))
 ```
 
 ![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 ## plot for BTC
+cor.btc <- cor(BTC$Close,BTC$NumTransactions) ## find correlation to be able to plot on graph
 sp.btc <- ggplot(data = BTC, aes(x = Close, y = NumTransactions))
 sp.btc + geom_point() + geom_smooth(method = lm, col ="purple") +
          ggtitle("Scatterplot for Bitcoin") +
-         labs(x = "Close Price ($)")
+         labs(x = "Close Price ($)") +
+         geom_text(x = 60000, y = 2000000, size = 5, label = paste0("Corr = ", round(cor.btc,2)))
 ```
 
 ![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 ## plot for ETH
+cor.eth <- cor(ETH$Close,ETH$NumTransactions) ## find correlation to be able to plot on graph
 sp.eth <- ggplot(data = ETH, aes(x = Close, y = NumTransactions))
 sp.eth + geom_point() + geom_smooth(method = lm, col = "purple") +
          ggtitle("Scatterplot for Ethereum") + 
-         labs(x = "Close Price ($)")
+         labs(x = "Close Price ($)") +
+         geom_text(x = 4500, y = 1500000, size = 5, label = paste0("Corr = ", round(cor.eth,2)))
 ```
 
 ![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-4.png)<!-- -->
