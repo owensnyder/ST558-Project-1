@@ -33,8 +33,6 @@ Owen Snyder
     -   [Scatter Plots for SPY, VOO, BTC,
         ETH](#scatter-plots-for-spy-voo-btc-eth)
 
-Create render function
-
 # The Main Purpose
 
 This is a complete vignette on how to use the Polygon.io API to extract
@@ -141,7 +139,7 @@ getAgg <- function(stocksTicker,multiplier,timespan="day",from,to,adjusted,sort=
   ## here we are converting a JSON object into a usable R object and suppressing warnings
   
   return(output$results)
-  ## return only the results 
+  ## return only the results(data) 
   
 }
 
@@ -177,7 +175,7 @@ getAggCryp <- function(cryptoTicker,multiplier,timespan="day",from,to,adjusted,
                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
-  return(output$results) ## return only the results 
+  return(output$results) ## return only the results(data)
 }
 
 ## test function
@@ -201,7 +199,7 @@ getEXCH <- function(asset_class,locale){
                  "&apiKey=O5bhHpJ7TFFBgq7bUJp8TA7Yi7uDLMIe")
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
-  return(output$results) ## return only the results section
+  return(output$results) ## return only the results section (data)
   
 }
 
@@ -225,7 +223,7 @@ getGroupBars <- function(date, adjusted, include_otc){
   ## the link to connect to the API endpoint
   output <- fromJSON(readLines(link,warn = FALSE))
   return(output$results) 
-  ## return only the results
+  ## return only the results (data)
 }
 
 ## test function
@@ -577,7 +575,7 @@ hist.spy + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: S&P 500")
 ```
 
-![](../images/unnamed-chunk-18-1.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 ## histogram for VOO
@@ -586,7 +584,7 @@ hist.voo + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Vanguard 500")
 ```
 
-![](../images/unnamed-chunk-18-2.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-18-2.png)<!-- -->
 
 ``` r
 ## histogram for BTC
@@ -595,7 +593,7 @@ hist.btc + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Bitcoin")
 ```
 
-![](../images/unnamed-chunk-18-3.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-18-3.png)<!-- -->
 
 ``` r
 ## histogram for ETH
@@ -604,7 +602,7 @@ hist.eth + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Ethereum")
 ```
 
-![](../images/unnamed-chunk-18-4.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-18-4.png)<!-- -->
 
 ## Boxplots: SPY, VOO, BTC, ETH
 
@@ -638,7 +636,7 @@ bp.spy + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: S&P 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-19-1.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 ## boxplot for VOO
@@ -647,7 +645,7 @@ bp.voo + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Vanguard 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-19-2.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 ## boxplot of BTC
@@ -656,7 +654,7 @@ bp.btc + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Bitcoin") +
          labs(y = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-19-3.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-19-3.png)<!-- -->
 
 ``` r
 ## boxplot for ETH
@@ -665,7 +663,7 @@ bp.eth + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Ethereum") +
          labs(y = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-19-4.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-19-4.png)<!-- -->
 
 ## Time Series Graph for SPY, VOO, BTC, ETH
 
@@ -702,7 +700,7 @@ ts.spy + geom_line(aes(y=LogRet), color = "purple") +
          theme(legend.position="none")
 ```
 
-![](../images/unnamed-chunk-20-1.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 ## time series graph for VOO
@@ -713,7 +711,7 @@ ts.voo + geom_line(aes(y=LogRet), color = "darkblue") +
          theme(legend.position="none")
 ```
 
-![](../images/unnamed-chunk-20-2.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-20-2.png)<!-- -->
 
 ``` r
 ## time series graph for BTC
@@ -724,7 +722,7 @@ ts.btc + geom_line(aes(y=LogRet), color = "red") +
          theme(legend.position="none")
 ```
 
-![](../images/unnamed-chunk-20-3.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-20-3.png)<!-- -->
 
 ``` r
 ## time series graph for ETH
@@ -735,7 +733,7 @@ ts.eth + geom_line(aes(y=LogRet), color = "blue") +
          theme(legend.position="none")
 ```
 
-![](../images/unnamed-chunk-20-4.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-20-4.png)<!-- -->
 
 ## Scatter Plots for SPY, VOO, BTC, ETH
 
@@ -760,7 +758,7 @@ sp.spy + geom_point() + geom_smooth(method = lm, col = "red") +
          labs(x = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-21-1.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 ## plot for VOO
@@ -770,7 +768,7 @@ sp.voo + geom_point() + geom_smooth(method = lm, col = "red") +
          labs(x = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-21-2.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 ## plot for BTC
@@ -780,7 +778,7 @@ sp.btc + geom_point() + geom_smooth(method = lm, col ="purple") +
          labs(x = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-21-3.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 ## plot for ETH
@@ -790,4 +788,4 @@ sp.eth + geom_point() + geom_smooth(method = lm, col = "purple") +
          labs(x = "Close Price ($)")
 ```
 
-![](../images/unnamed-chunk-21-4.png)<!-- -->
+![](st558-Project1-rmd_files/figure-htmlunnamed-chunk-21-4.png)<!-- -->
