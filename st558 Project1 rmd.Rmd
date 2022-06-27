@@ -11,9 +11,9 @@ output:
 ```{r eval=FALSE, echo=FALSE}
 ## create a render function
 
-rmarkdown::render('README.md',
+rmarkdown::render("st558 Project1 rmd.Rmd",
                   output_format = "github_document",
-                  #output_dir = "images",
+                  output_file = "README.md",
                   output_options = list(
                     html_preview = FALSE, toc = TRUE, toc_depth = 2, toc_float = TRUE)
 )
@@ -22,8 +22,8 @@ rmarkdown::render('README.md',
 
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(fig.path = "st558-Project1-rmd_files/figure-html")
-
+knitr::opts_chunk$set(fig.path = "ST558-Project-1/images/")
+#knitr::opts_chunk$set(fig.path = "../images/")
 ```
 
 
