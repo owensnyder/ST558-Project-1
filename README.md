@@ -429,57 +429,19 @@ the stock market and the crypto market.
 ## contingency table for SPY data, looking at TransCategory and Quarters, and switching to wide format
 SPY %>% group_by(TransCategory,Quarters) %>% summarize(counts = n()) %>% 
     pivot_wider(values_from = counts, names_from = Quarters)
-```
 
-    ## # A tibble: 3 × 5
-    ## # Groups:   TransCategory [3]
-    ##   TransCategory    Q1    Q2    Q3    Q4
-    ##   <chr>         <int> <int> <int> <int>
-    ## 1 Average          19    26     9     8
-    ## 2 Few               9    26    64    45
-    ## 3 Many             26    16     2     4
-
-``` r
 ## contingency table for VOO data, looking at TransCategory and Quarters, and switching to wide format
 VOO %>% group_by(TransCategory,Quarters) %>% summarize(counts = n()) %>% 
     pivot_wider(values_from = counts, names_from = Quarters)
-```
 
-    ## # A tibble: 3 × 5
-    ## # Groups:   TransCategory [3]
-    ##   TransCategory    Q1    Q2    Q3    Q4
-    ##   <chr>         <int> <int> <int> <int>
-    ## 1 Average          32    31    22    27
-    ## 2 Few               6    27    51    28
-    ## 3 Many             16    10     2     2
-
-``` r
 ## contingency table for BTC data, looking at TransCategory and Quarters, and switching to wide format
 BTC %>% group_by(TransCategory,Quarters) %>% summarize(counts = n()) %>% 
     pivot_wider(values_from = counts, names_from = Quarters)
-```
 
-    ## # A tibble: 3 × 5
-    ## # Groups:   TransCategory [3]
-    ##   TransCategory    Q1    Q2    Q3    Q4
-    ##   <chr>         <int> <int> <int> <int>
-    ## 1 Average          56    51    16    62
-    ## 2 Few              21    22    72    17
-    ## 3 Many             13    19     4    13
-
-``` r
 ## contingency table for ETH data, looking at TransCategory and Quarters, and switching to wide format
 ETH %>% group_by(TransCategory,Quarters) %>% summarize(counts = n()) %>% 
     pivot_wider(values_from = counts, names_from = Quarters)
 ```
-
-    ## # A tibble: 3 × 5
-    ## # Groups:   TransCategory [3]
-    ##   TransCategory    Q1    Q2    Q3    Q4
-    ##   <chr>         <int> <int> <int> <int>
-    ## 1 Average          55    45    16    38
-    ## 2 Few              22    33    73    51
-    ## 3 Many             13    14     3     3
 
 ## Numerical Summaries
 
@@ -524,60 +486,21 @@ different quarters of growth and returns.
 SPY %>% group_by(Quarters) %>% summarise(avgOpen = mean(Open), avgClose = mean(Close), 
                                          avgLogRet = mean(LogRet), sdLogRet = sd(LogRet),
                                          avgTrans = mean(NumTransactions))
-```
 
-    ## # A tibble: 4 × 6
-    ##   Quarters avgOpen avgClose avgLogRet sdLogRet avgTrans
-    ##   <chr>      <dbl>    <dbl>     <dbl>    <dbl>    <dbl>
-    ## 1 Q1          441.     441.  0.000401  0.0137  1101395.
-    ## 2 Q2          422.     421. -0.00329   0.0163   816281.
-    ## 3 Q3          440.     440.  0.000544  0.00739  470895.
-    ## 4 Q4          464.     464.  0.000848  0.00894  539448.
-
-``` r
 ## VOO data
 VOO %>% group_by(Quarters) %>% summarise(avgOpen = mean(Open), avgClose = mean(Close), 
                                          avgLogRet = mean(LogRet), sdLogRet = sd(LogRet),
                                          avgTrans = mean(NumTransactions))
-```
-
-    ## # A tibble: 4 × 6
-    ##   Quarters avgOpen avgClose avgLogRet sdLogRet avgTrans
-    ##   <chr>      <dbl>    <dbl>     <dbl>    <dbl>    <dbl>
-    ## 1 Q1          405.     406.  0.000402  0.0136   163707.
-    ## 2 Q2          388.     387. -0.00329   0.0162   123707.
-    ## 3 Q3          405.     405.  0.000545  0.00727   89236.
-    ## 4 Q4          427.     427.  0.000842  0.00872  105276.
-
-``` r
 ## BTC data
 BTC %>% group_by(Quarters) %>% summarise(avgOpen = mean(Open), avgClose = mean(Close), 
                                          avgLogRet = mean(LogRet),sdLogRet = sd(LogRet),
                                          avgTrans = mean(NumTransactions))
-```
 
-    ## # A tibble: 4 × 6
-    ##   Quarters avgOpen avgClose avgLogRet sdLogRet avgTrans
-    ##   <chr>      <dbl>    <dbl>     <dbl>    <dbl>    <dbl>
-    ## 1 Q1        41302.   41292. -0.000165   0.0351  662756.
-    ## 2 Q2        35181.   34872. -0.00911    0.0406  706141.
-    ## 3 Q3        41888.   41982.  0.00241    0.0348  444181.
-    ## 4 Q4        55896.   55925.  0.000590   0.0342  639951.
-
-``` r
 ## ETH data
 ETH %>% group_by(Quarters) %>% summarise(avgOpen = mean(Open), avgClose = mean(Close), 
                                          avgLogRet = mean(LogRet),sdLogRet = sd(LogRet),
                                          avgTrans = mean(NumTransactions))
 ```
-
-    ## # A tibble: 4 × 6
-    ##   Quarters avgOpen avgClose avgLogRet sdLogRet avgTrans
-    ##   <chr>      <dbl>    <dbl>     <dbl>    <dbl>    <dbl>
-    ## 1 Q1         2939.    2934.  -0.00126   0.0409  621339.
-    ## 2 Q2         2405.    2381.  -0.0118    0.0499  607405.
-    ## 3 Q3         2842.    2850.   0.00300   0.0469  399008.
-    ## 4 Q4         4092.    4100.   0.00221   0.0387  509313.
 
 ## Histograms: SPY, VOO, BTC, ETH
 
@@ -599,7 +522,7 @@ hist.spy + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: S&P 500")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-19-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 ## histogram for VOO
@@ -608,7 +531,7 @@ hist.voo + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Vanguard 500")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-19-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 ## histogram for BTC
@@ -617,7 +540,7 @@ hist.btc + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Bitcoin")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-19-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-3.png)<!-- -->
 
 ``` r
 ## histogram for ETH
@@ -626,7 +549,7 @@ hist.eth + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Ethereum")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-19-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-19-4.png)<!-- -->
 
 ## Boxplots: SPY, VOO, BTC, ETH
 
@@ -662,7 +585,7 @@ bp.spy + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: S&P 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-20-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 ## boxplot for VOO
@@ -671,7 +594,7 @@ bp.voo + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Vanguard 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-20-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
 
 ``` r
 ## boxplot of BTC
@@ -680,7 +603,7 @@ bp.btc + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Bitcoin") +
          labs(y = "Close Price ($)")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-20-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
 
 ``` r
 ## boxplot for ETH
@@ -689,7 +612,7 @@ bp.eth + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Ethereum") +
          labs(y = "Close Price ($)")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-20-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-4.png)<!-- -->
 
 ## Time Series Graph for SPY, VOO, BTC, ETH
 
@@ -726,7 +649,7 @@ ts.spy + geom_line(aes(y=LogRet), color = "purple") +
          theme(legend.position="none")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-21-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 ## time series graph for VOO
@@ -737,7 +660,7 @@ ts.voo + geom_line(aes(y=LogRet), color = "darkblue") +
          theme(legend.position="none")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-21-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 ## time series graph for BTC
@@ -748,7 +671,7 @@ ts.btc + geom_line(aes(y=LogRet), color = "red") +
          theme(legend.position="none")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-21-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 ## time series graph for ETH
@@ -759,7 +682,7 @@ ts.eth + geom_line(aes(y=LogRet), color = "blue") +
          theme(legend.position="none")
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-21-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-21-4.png)<!-- -->
 
 ## Scatter Plots for SPY, VOO, BTC, ETH
 
@@ -788,7 +711,7 @@ sp.spy + geom_point() + geom_smooth(method = lm, col = "red") +
          geom_text(x = 460, y = 3e+06, size = 5, label = paste0("Corr = ", round(cor.spy,2)))
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-22-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 ## plot for VOO
@@ -800,7 +723,7 @@ sp.voo + geom_point() + geom_smooth(method = lm, col = "red") +
          geom_text(x = 430, y = 4e+05, size = 5, label = paste0("Corr = ", round(cor.voo,2)))
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-22-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-2.png)<!-- -->
 
 ``` r
 ## plot for BTC
@@ -812,7 +735,7 @@ sp.btc + geom_point() + geom_smooth(method = lm, col ="purple") +
          geom_text(x = 60000, y = 2000000, size = 5, label = paste0("Corr = ", round(cor.btc,2)))
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-22-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-3.png)<!-- -->
 
 ``` r
 ## plot for ETH
@@ -824,4 +747,4 @@ sp.eth + geom_point() + geom_smooth(method = lm, col = "purple") +
          geom_text(x = 4500, y = 1500000, size = 5, label = paste0("Corr = ", round(cor.eth,2)))
 ```
 
-![](ST558-Project-1/images/unnamed-chunk-22-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-4.png)<!-- -->

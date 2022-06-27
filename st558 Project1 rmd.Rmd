@@ -22,7 +22,7 @@ rmarkdown::render("st558 Project1 rmd.Rmd",
 
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(fig.path = "ST558-Project-1/images/")
+#knitr::opts_chunk$set(fig.path = "ST558-Project-1/README.md/")
 #knitr::opts_chunk$set(fig.path = "../images/")
 ```
 
