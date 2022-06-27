@@ -599,7 +599,7 @@ hist.spy + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: S&P 500")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-19-1.png)<!-- -->
+![](../images/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 ## histogram for VOO
@@ -608,7 +608,7 @@ hist.voo + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Vanguard 500")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-19-2.png)<!-- -->
+![](../images/unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
 ## histogram for BTC
@@ -617,7 +617,7 @@ hist.btc + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Bitcoin")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-19-3.png)<!-- -->
+![](../images/unnamed-chunk-19-3.png)<!-- -->
 
 ``` r
 ## histogram for ETH
@@ -626,7 +626,7 @@ hist.eth + geom_histogram(bins = 35, fill = "lightblue", colour = 8) +
            ggtitle("Histogram of Transactions: Ethereum")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-19-4.png)<!-- -->
+![](../images/unnamed-chunk-19-4.png)<!-- -->
 
 ## Boxplots: SPY, VOO, BTC, ETH
 
@@ -662,7 +662,7 @@ bp.spy + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: S&P 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-20-1.png)<!-- -->
+![](../images/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 ## boxplot for VOO
@@ -671,7 +671,7 @@ bp.voo + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Vanguard 500") +
          labs(y = "Close Price ($)")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-20-2.png)<!-- -->
+![](../images/unnamed-chunk-20-2.png)<!-- -->
 
 ``` r
 ## boxplot of BTC
@@ -680,7 +680,7 @@ bp.btc + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Bitcoin") +
          labs(y = "Close Price ($)")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-20-3.png)<!-- -->
+![](../images/unnamed-chunk-20-3.png)<!-- -->
 
 ``` r
 ## boxplot for ETH
@@ -689,7 +689,7 @@ bp.eth + geom_boxplot() + geom_jitter() + ggtitle("Boxplot: Ethereum") +
          labs(y = "Close Price ($)")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-20-4.png)<!-- -->
+![](../images/unnamed-chunk-20-4.png)<!-- -->
 
 ## Time Series Graph for SPY, VOO, BTC, ETH
 
@@ -726,7 +726,7 @@ ts.spy + geom_line(aes(y=LogRet), color = "purple") +
          theme(legend.position="none")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-21-1.png)<!-- -->
+![](../images/unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 ## time series graph for VOO
@@ -737,7 +737,7 @@ ts.voo + geom_line(aes(y=LogRet), color = "darkblue") +
          theme(legend.position="none")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-21-2.png)<!-- -->
+![](../images/unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
 ## time series graph for BTC
@@ -748,7 +748,7 @@ ts.btc + geom_line(aes(y=LogRet), color = "red") +
          theme(legend.position="none")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-21-3.png)<!-- -->
+![](../images/unnamed-chunk-21-3.png)<!-- -->
 
 ``` r
 ## time series graph for ETH
@@ -759,7 +759,7 @@ ts.eth + geom_line(aes(y=LogRet), color = "blue") +
          theme(legend.position="none")
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-21-4.png)<!-- -->
+![](../images/unnamed-chunk-21-4.png)<!-- -->
 
 ## Scatter Plots for SPY, VOO, BTC, ETH
 
@@ -788,7 +788,7 @@ sp.spy + geom_point() + geom_smooth(method = lm, col = "red") +
          geom_text(x = 460, y = 3e+06, size = 5, label = paste0("Corr = ", round(cor.spy,2)))
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-22-1.png)<!-- -->
+![](../images/unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
 ## plot for VOO
@@ -800,7 +800,7 @@ sp.voo + geom_point() + geom_smooth(method = lm, col = "red") +
          geom_text(x = 430, y = 4e+05, size = 5, label = paste0("Corr = ", round(cor.voo,2)))
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-22-2.png)<!-- -->
+![](../images/unnamed-chunk-22-2.png)<!-- -->
 
 ``` r
 ## plot for BTC
@@ -812,7 +812,7 @@ sp.btc + geom_point() + geom_smooth(method = lm, col ="purple") +
          geom_text(x = 60000, y = 2000000, size = 5, label = paste0("Corr = ", round(cor.btc,2)))
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-22-3.png)<!-- -->
+![](../images/unnamed-chunk-22-3.png)<!-- -->
 
 ``` r
 ## plot for ETH
@@ -824,4 +824,4 @@ sp.eth + geom_point() + geom_smooth(method = lm, col = "purple") +
          geom_text(x = 4500, y = 1500000, size = 5, label = paste0("Corr = ", round(cor.eth,2)))
 ```
 
-![](st558-Project-1/imgages/unnamed-chunk-22-4.png)<!-- -->
+![](../images/unnamed-chunk-22-4.png)<!-- -->
